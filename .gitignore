@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.pdf
+node_modules
+.DS_Store
+dist/
+deploy-full.sh

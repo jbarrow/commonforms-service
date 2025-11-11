@@ -1,0 +1,16 @@
+[project]
+name = "detection"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "commonforms>=0.1.1",
+    "fastapi[standard]>=0.117.1",
+    "formalpdf==0.1.5",
+    "modal>=1.1.4",
+    "pydantic>=2.11.9",
+    "pypdf>=6.1.1",
+    "ruff>=0.14.0",
+    "ultralytics>=8.3.204",
+]
