@@ -14,6 +14,8 @@ import time
 import os
 import re
 
+#import subprocess
+
 
 MAX_BYTES = 100 * 1024 * 1024  # 100MB
 CHUNK_SIZE = 1 * 1024 * 1024  # 1MB
@@ -65,7 +67,7 @@ async def stream_save_pdf(
 
 class PreparationConfig(BaseModel):
     model: Literal["small", "large"]
-    sensitivity: float = 0.3
+    sensitivity: int
     use_signature_fields: bool
     keep_existing_fields: bool
 
@@ -97,7 +99,8 @@ image = (
         "fastapi[standard]",
         "python-multipart",
         "pydantic",
-        "commonforms==0.1.4",
+        "commonforms==0.1.4"#,
+        #gpu="T4"
     )
     .add_local_dir("./dist", "/root/dist")
 )
@@ -117,7 +120,7 @@ MODEL_MAP = {
 }
 
 
-@app.function(volumes={str(DATA_PATH): volume}, cpu=4.0)
+@app.function(volumes={str(DATA_PATH): volume},cpu=4.0)# gpu="T4")
 def prepare_pdf(input_path: str | Path, output_path: str | Path, config: PreparationConfig, document_id: str):
     volume.reload()
 
@@ -126,13 +129,22 @@ def prepare_pdf(input_path: str | Path, output_path: str | Path, config: Prepara
         "run_time": datetime.now()
     }
 
+    #subprocess.run(["nvidia-smi"])
+    print(config.sensitivity)
+    
+    sensitivity_confidence = [0.8, 0.5, 0.3, 0.1, 0.01]
+    conf = sensitivity_confidence[config.sensitivity-1]
+    print(conf)
+    
     try:
         prepare_form(
             input_path,
             output_path,
             keep_existing_fields=config.keep_existing_fields,
             use_signature_fields=config.use_signature_fields,
-            model_or_path=MODEL_MAP[config.model]
+            model_or_path=MODEL_MAP[config.model],
+            device = "cpu",#"cuda"
+            confidence = conf
         )
         volume.commit()
         job_status = "success"
