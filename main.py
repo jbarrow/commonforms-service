@@ -99,8 +99,8 @@ image = (
         "fastapi[standard]",
         "python-multipart",
         "pydantic",
-        "commonforms==0.1.4"#,
-        #gpu="T4"
+        "commonforms==0.1.4",
+        gpu="T4"
     )
     .add_local_dir("./dist", "/root/dist")
 )
@@ -120,7 +120,7 @@ MODEL_MAP = {
 }
 
 
-@app.function(volumes={str(DATA_PATH): volume},cpu=4.0)# gpu="T4")
+@app.function(volumes={str(DATA_PATH): volume}, gpu="T4")#cpu=4.0)
 def prepare_pdf(input_path: str | Path, output_path: str | Path, config: PreparationConfig, document_id: str):
     volume.reload()
 
@@ -143,7 +143,7 @@ def prepare_pdf(input_path: str | Path, output_path: str | Path, config: Prepara
             keep_existing_fields=config.keep_existing_fields,
             use_signature_fields=config.use_signature_fields,
             model_or_path=MODEL_MAP[config.model],
-            device = "cpu",#"cuda"
+            device = "cuda",
             confidence = conf
         )
         volume.commit()
