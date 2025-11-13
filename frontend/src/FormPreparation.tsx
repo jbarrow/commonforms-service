@@ -27,7 +27,8 @@ interface StatusResponse {
   queue_time: number;
 }
 
-const API_BASE = "https://jbarrow--form-preparation-form-preparation.modal.run";
+//set API_BASE with your own modal username
+const API_BASE = "https://<modal-username>--form-preparation-form-preparation.modal.run";
 const POLL_MS = 1500;
 
 const API = {
@@ -75,7 +76,7 @@ export function buildPrepareRequest(
     documentId,
     config: {
       model: mapChoiceToModel(choice),
-      sensitivity: sensitivity / 100, // Convert 0-100 to 0-1 for API
+      sensitivity: sensitivity, // Convert 0-100 to 0-1 for API
       use_signature_fields: !useTextboxesForSignatures,
       keep_existing_fields: keepExisting,
     },
@@ -91,7 +92,7 @@ export default function FormPreparation() {
   const [choice, setChoice] = useState<"quick" | "standard" | "enhanced">("standard");
 
   const [advancedOpen, setAdvancedOpen] = useState(false);
-  const [sensitivity, setSensitivity] = useState(30);
+  const [sensitivity, setSensitivity] = useState(3);
   const [useTextboxesForSignatures, setUseTextboxesForSignatures] = useState(false);
   const [keepExisting, setKeepExisting] = useState(false);
 
@@ -298,8 +299,8 @@ export default function FormPreparation() {
                       </div>
                       <input
                         type="range"
-                        min={0}
-                        max={100}
+                        min={1}
+                        max={5}
                         value={sensitivity}
                         onChange={(e) => setSensitivity(parseInt(e.target.value, 10))}
                         className="w-full"
